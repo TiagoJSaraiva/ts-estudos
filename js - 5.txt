@@ -1,0 +1,50 @@
+1.
+
+A
+B
+C
+
+Acho que a Promise começa rejected com mensagem de erro "A", primeiro .catch recebe o erro, retorna B pro próximo .then encadeado, que lança só um caractere "C", que não é um valor do tipo Error, mas ainda é recebido pelo catch porque é usado throw.
+Seila.
+
+Acho que a Promise fica rejected desde o começo.
+
+Porque algum usaria Promise.reject, oque esse método sequer faz?
+
+2.
+
+No primeiro caso, se uma Promise rejeitar, todo o Promise.all() é interrompido e um erro é retornado para o sistema.
+
+Enquanto isso, se um erro for retornado em algumas das promisses no método allSettled, o erro é apenas armazenado com status rejected.
+
+3.
+
+O valor de result no primeiro caso seria a primeira request a retornar fullfiled. No segundo caso, seria a primeira request a retornar no geral, seja fullfiled ou rejected.
+
+4.
+
+1
+7
+3
+4
+6
+2
+5
+
+Primeiro, o codigo é executado de forma síncrona, então os console.log na raiz são executados.
+
+Depois, todas as Promises são resolvidas, pois são as próximas tasks na call stack.
+
+Depois que a call stack está limpa, os setTimout criados são resolvidos em ordem de declaração.
+
+
+5.
+
+Tecnicamente funciona, mas é uma solução péssima.
+Transformar todos os erros em null iria esconder as suas origens.
+É uma solução muito melhor utilizar allSettled.
+
+
+
+
+

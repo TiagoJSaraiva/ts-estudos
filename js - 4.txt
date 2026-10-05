@@ -1,0 +1,79 @@
+
+1.
+
+A
+B
+D
+C
+
+Await 10 funciona porque a tipagem de javascript é fraca e Await retorna uma promise mesmo quando você usa ela com um valor de qualquer outro tipo.
+
+2.
+
+1
+3
+2
+X
+
+Segundo then recebe X porque Promise.resolve("X") já é uma promise settled e todo argumento passado pro próximo .then é convertido de Promise no valor dela sem necessidade de usar await, assim o valor passado de argumento é X ao invés de Promise { X }, mas mesmo se o caso fosse diferente como por exemplo:
+
+Promise.resolve()
+    .then(() => {
+        console.log("2");
+        return Promise.resolve("X")
+	       .then((char) => char;
+    })
+    .then(value => {
+        console.log(value);
+    });
+
+Ainda assim o valor seria X porque novamente, a passagem de parâmetro funciona como um await esperando assim a promisse ir de pendent pra settled antes de usar.
+
+Uma forma fácil de visualizar isso é com
+
+const letra = Promise.resolve('X');
+console.log(letra);
+
+Aqui a promise já ta settled, mas sem await o valor de letra ainda é Promise { X }
+
+enquanto em 
+
+const letra = await Promise.resolve('X');
+console.log(letra);
+
+Aí sim a saída é X.
+
+3.
+
+A
+C
+10
+
+B não aparece porque um erro é emitido na função anonima do primeiro then(). da cadeia da Promise, chamando assim catch() que recebe o Erro como parâmetro, executa sua lógica e depois a lógica dos .then() encadeados nele.
+
+4.
+
+A
+F
+C
+E
+B
+D
+
+Não lembro exatamente qual a ordem na call stack entre o setTimeout e a Promise, mas considerando que o setTimeout seja antes, tá aí
+
+5.
+
+Inicialmente pensei que Se alguma das Promises de Promise.all retornar erro, tudo falha, mas ocorreu que:
+
+const [a, b] = await Promise.all([
+     Promise.resolve().then(() => { throw new Error('erro aqui'); return 'alo' }).catch(e => 'erro'),
+    Promise.resolve().then(() => 'ola')
+]);
+
+console.log(a, b);
+
+Funcionou corretamente, mas talvez porque o erro está sendo lidado.
+
+Além disso, o caso 1 é sequencial enquanto caso 2 é concorrente.
+

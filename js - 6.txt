@@ -1,0 +1,132 @@
+1. Suponho que any seja usado quando um valor pode ser de qualquer tipo, em casos de que a variável va ser usada para valores de tipos diferentes, ou o programador não quer declarar o tipo, coisas assim, mais "contra" os princípios do typescript. Já unkown é quando o valor realmente não pode ser previsto, como por exemplo o valor retornado por uma API específica que pode retornar tipos de dado diferentes.
+
+Resumindo, acho que "any" é um "não ligo pro tipo" e "unknown" é um "não sei o tipo"
+
+E eu acho que o texto mostrado compila, talvez apenas emitindo um warn, a não ser que unkown esteja com seu uso explicitamente bloqueado no espaço de desenvolvimento
+
+2.
+
+if (value && typeof(value) === "object") {
+value.length ? console.log(value.length) : console.error("objeto não possui atributo length");
+return;
+}
+console.error("valor recebido não é um objeto");
+
+3.
+
+Uma função que retorna void, ou um procedimento, é uma função que não retorna nada relevante, retorna undefined, ou seja se você fizer por exemplo
+
+console.log(logMessage("ola"));
+
+A saída será 
+
+ola 
+undefined
+
+O undefined se refere ao console.log() no escopo global do script, pois logMessage("ola") retorna undefined.
+
+result será do tipo "undefined", pois o seu valor também é "undefined".
+
+4.
+
+Nunca aprendi formalmente sobre tipo "never", mas eu assumo que seja o valor atribuído a uma função que nunca retorna. No primeiro caso, a função não retorna pois ela dispara um erro de forma certificada, fazendo com que seja "never" e não "void".
+
+O segundo caso em tese nunca retorna pois fica preso no while true indefinidamente, então assumo que a função possa sim ser do tipo never.
+
+5.
+
+Acho que não compila. Eu sei que definir um tipo como "string | number" quer dizer que o valor vai ser string OU number, então o código da função tem que ser preparado para lidar com ambos os casos. Nessa função de exemplo, não existe tratamento adequado pra caso value seja number, afinal number não possúi o método toUpperCase, então em javascript tradicional a função retornaria undefined se value adquirido como parâmetro fosse um number.
+
+Para corrigir, eu faria:
+
+switch (typeof(value)) {
+	case "number": return String(value);
+	case "string": return value.toUpperCase();
+}
+throw new Error("Valor de tipo inválido");
+
+6.
+
+Nesse exemplo, estão sendo criados 2 tipos: Person e Employee.
+Na terceira declaração de type, uma intersection está sendo realizada, oque eu assumo que une os atributos dos tipos que fazem parte da intersection em um novo type.
+Então type EmployeePerson seria =
+{
+	name : string;
+	salary : number;
+}
+
+Na intersection que você mostrou, talvez value possa ser "string | number".
+
+7.
+
+Para o valor parar no primeiro bloco, deve ser null, no segundo, deve ser type string, no terceiro, deve ser type number, então por exemplo, se dentro de cada bloco houver métodos que manipulam o valor de forma dependente de tipo, como um return value.length no bloco que verifica se value é string, o typescript não reclama. O typescript conclui essas coisas pois a tipagem dele é verificada em tempo real nos scripts .ts e os erros são apontados durante o desenvolvimento, ao invés de durante a execução, agora a forma que isso ocorre por baixo dos panos eu não sei, mas talvez alguma API tente consumir o código escrito em arquivos .ts a cada alteração testando o tipo definido pra uma variável, parâmetro, etc, usando um valor de teste, e ver se dá algum problema o caminho, como uma tentativa de adquirir .length de um number.
+
+8.
+
+value.name não funciona nesse caso pois o parâmetro value não está tipado como um tipo que possua o atributo name, além de que a verificação typeof value === "object" e depois "name" in value é fraco. 
+Acho que apenas trocar o conteúdo do return para
+return typeof value === "User";
+já corrigiria o problema, pois "User" é um tipo que garantidamente possui o atributo "name: string"
+
+9.
+
+Esse valor "status" parece ter uma propriedade diferente, pois o valor atribuido a ele não é um tipo, mas sim algo que parece uma string. Eu entendi conceitualmente esse type, junto com o código: Se result.status === "success", o typescript identifica que o tipo é o definido na primeira "opção" atribuido a Result, e como "status" é um atributo existente em ambos os conjuntos de atributos possíveis para valores do tipo Result, o typescript não reclama da verificação.
+
+10.
+
+No primeiro caso, o tipo de x e y seriam "any", pois a função retorna any.
+
+No segundo caso, o tipo dos parâmetros é atribuido a T definido em <T>, permitindo que os tipos dos parâmetros da função e do valor que ela retorna sejam definidos dinâmicamente na execução, mas ainda respeitando regras de tipagem, permitindo transformações complexas de forma confiável, mesmo numa função usada com diferentes tipos de dado. Logo, os tipos de x e y seriam o mesmo tipo do valor enviado como argumento pra função, então, respectivamente, string e number.
+
+11. 
+
+Isso pode dar problema pois não há garantia nenhuma que value vá ter o atributo length.
+
+Eu não sei a sintaxe correta do typescript para restringir T para permitir apenas valores que tenham essa propriedade, então só conseguiria resolver esse problema utilizando outros métodos menos elegantes.
+
+12. 
+
+Não entendi nada.
+
+13.
+
+Eu assumo que nesse caso, type Settings cria um "blueprint" dos atributos e seus tipos do objeto settings, virando 
+type Settings {
+	darkMode: boolean,
+	lenguage: "pt"
+};
+
+No caso do console.log(typeof settings);
+Seria exibido apenas " object " no terminal, então assumo que a atribuição de "typeof algo" à "type NovoTipo" deve ter uma propriedade diferente do uso normal de typeof.
+
+14.
+
+Eu assumo que atribuir uma "chave" de um "type" a outro type, guarda o type da chave no type cuja atribuição é feita. 
+Por exemplo, no primeiro caso, typeof UserName === "string", typeof Address === "object", etc.
+
+Oque você mandou no fim eu não conheço nada.
+
+15.
+
+No caso produzido, pode dar erros de referência, pois, por exemplo, user não possui a chave "banana"
+
+Um jeito melhor seria usando generics, tipo:
+
+function getValue<T>(object: object, key: string): keyof T 
+{
+  return object[key];
+}
+
+Também troquei o tipo do parâmetro "object" para object, para evitar envio de parâmetros de outros tipos, oque daria erro se o programador por exemplo usasse
+const value = getValue(10, "nome");
+
+A afirmação, logo, está incorreta, pois any remove toda a segurança que types são supostos de trazer.
+
+Nos 3 casos mostrados, no primeiro e no segundo o valor da variável const se torna um dos valores do objeto, no primeiro caso sendo id e no segundo name, já no terceiro caso, "banana" provavelmente fica como undefined visto que user.banana não é válido.
+
+
+
+
+
+
+

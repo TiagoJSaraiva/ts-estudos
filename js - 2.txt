@@ -1,0 +1,131 @@
+1.
+
+Até onde eu entendo, código síncrono é o comportamento padrão do código em javascript, em que cada linha de código do sistema é executada de forma ininterrupta, mesmo que uma request não retorne imediatamente, então por exemplo:
+let frase; setTimeout(() => { frase = 'ola'; console.log('frase é ola') }, 2000); console.log('isso aparece antes'); console.log(frase);"
+Nesse caso, console.log(frase) imprime undefined, pois após a chamada de setTimeout o código continua sendo executado. 
+O mesmo aconteceria se uma request para uma API fosse realizada: O runtime do js não espera a request retornar uma resposta antes de prosseguir executando o código.
+Já no comportamento assíncrono, após a chamada de uma API, o código espera a requisição retornar algo antes de prosseguir.
+Uma requisição HTTP é assíncrona pois ela espera uma resposta retornar antes de prosseguir.
+
+2. 
+
+Um callback é uma função que é passada como argumento para outra função, para ser chamada dentro dessa outra função.
+O output será:
+before
+callback
+after
+
+Não vejo como este código pode ser assíncrono só por causa disso.
+
+3.
+
+Eu sei que Promise é um tipo de dado no javascript, e eu sei que ele é usado pra criar código assíncrono, mas eu não lembro de cabeça como ele é usado.
+
+4.
+
+Olhando assim eu consigo entender de certo modo o fluxo: 
+- Em resolve é enviado 10 como argumento
+- Esse argumento é recebido em "value" nos métodos .then()
+- Cada .then() aninhado é chamado em ordem
+- Quando um .then() lança erro, .catch() é chamado recebendo o erro como parâmetro
+- Após o .catch(), os .then() colocados após dele são chamados.
+- No final da execução dos métodos, tenha o fluxo caído em .catch() ou não, é chamado o .finally()
+
+A saída nesse caso seria:
+10
+20
+error
+50
+finished
+
+5. 
+
+O que será emitido nesse caso será { Promise = 10 }, não sei porque mas lembro disso.
+Para "captar" o valor da promise, deve se usar await atrás da chamada da função:
+const result = await getNumber();
+
+6. 
+
+O await deve ser usado junto com o async, como dito antes. Como já informei, eu não sei de forma técnica como funciona.
+
+A ordem do output eu não faço ideia. Tem a parte intuitiva, que é
+C
+A
+
+A partir daqui já não sei como essa atribuição funciona, ou oque sequer quer dizer esse método .resolve(10), sem nenhum .then()
+Caso ele retorne apenas a si mesmo, imagino que o output seja
+C
+A
+B
+10
+D
+
+7.
+
+Pelo código, eu suponho que quando algum erro seja emitido no meio de uma execução como essa, o código cancela o resto da execução em try {} e vai para o catch (error) {}, recebendo como argumento o erro emitido dentro de try {}.
+Uma coisa que eu não consigo inferir é oque acontece com const result, pois "load()" não retorna nada, e mesmo se retornasse, se o lançamento do erro viesse antes do retorno, ainda não retornaria nada, ou então, é retornado talvez undefined ou algum valor que indique que erro ocorreu, como { Promise = Error }
+
+8.
+
+Acho que não faria diferença. Se user Promise guarda uma referência pra getUser() por exemplo, quando a constante é evocada com await eu imagino que a funcionalidade seja a mesma que o primeiro caso, então acho que não há diferença. 
+
+9.
+
+Gera um array com o resultado de de todos os resolve()? Oque parece é que o Promise.all() está recebendo um array de Promises.resolve() dentro dele, então parece que o mais lógico é que results seja
+[10, 20, 30];
+
+No segundo caso, pode-se pensar que o resultado é um array com
+[10, Error: "failed", 30] (ou coisa assim).
+Mas eu imagino que ocorra algo diferente visto que o método de Promise no segundo índice é .reject(), então não sei oque acontece.
+
+10.
+
+Não sei direito oque qualquer um desses faz. Eu poderia assumir ou chutar mas não vale a pena.
+
+11.
+
+Não consigo dizer a saída sem praticamente chutar oque seria. Não consigo assumir quando o setTimeout, mesmo recebendo 0 como argumento pro tempo de duração é executado mediante o resto do script, e como o Promise.resolve() sem um script que demore para retornar seja executado. 
+
+12.
+
+Também não consigo explicar.
+
+13.
+
+Não consigo concluir sem chutar.
+
+14.
+
+Não consigo concluir sem chutar. Essa parte de ordem síncrona de execução eu realmente não entendo, talvez nunca tenha nem estudado.
+
+15.
+
+O principal problema que consigo identificar nessa função é que fetchUser é chamado de forma assíncrona para cada um dos id, oque pode fazer o tempo de execução aumentar muito quanto mais o número de ids aumenta. Talvez seria melhor usar promise para conseguir chamar fetchUser para cada id de forma síncrona, e depois que todos estivessem retornados, retornar o array de users. Talvez usando um Promise.all().
+
+16.
+
+Bem apontado. Se muitos processUser(id) forem chamados de uma vez só, pode causar travamento e outros problemas. 
+Mas usar await pra cada request também gastaria muito tempo. 
+Talvez seria ideal bolar uma forma de limitar a quantia de requests pra cada chamada?
+Por exemplo, limitar a 500 ids por vez, e assim que uma Promise.all() concluir, chama-a novamente com o próximo conjunto de 500 ids, e assim em diante.
+
+17. 
+
+Não entendo os conceitos o suficiente para prever a sequências de saída.
+
+oque eu acho:
+
+Sobre async await, eu sei um pouco, sobre promises, muito pouco, agora, sobre ordem de execução de eventos (call stack ou algo assim), quase nada.
+
+
+
+
+
+
+
+
+
+
+
+
+

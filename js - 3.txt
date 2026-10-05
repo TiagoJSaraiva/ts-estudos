@@ -1,0 +1,57 @@
+Reteste
+
+A.
+
+A
+B
+C
+
+Conteúdo de result é uma Promise, pois em const result = foo();
+foo() é chamado de forma assíncrona, fazendo com que ele retorne uma promise, e fazendo também com que a função foo() e o resto do código sejam executados ao mesmo tempo a partir da chamada. Então o conteúdo de result pode ser Promise { <pending> } ou Promise { 10 }, dependendo do momento em que ele fosse tentado ser usado.
+
+B.
+
+A
+C
+B
+
+O Promise.resolve() é uma microtask, então só é executado depois que a Call Stack ficar vazia.
+
+C.
+
+3
+1
+4
+2
+
+D.
+
+10
+20
+
+O valor retornado pela função anônima de um .then é recebida como parâmetro da função anonimada passada como argumento para o próximo .then encadeado no mesmo Promise.resolve()
+
+
+E.
+
+const userPromise = fetchUser();
+const postsPromise = fetchPosts();
+// Isso aqui inicia simultaneamente a execução das duas funções e retorna a promise do resultado pra cada uma das 
+constantes.
+
+const user = await userPromise;
+// Espera userPromise deixar de ficar pendente e depois guarda o valor retornado pela Promise.
+const posts = await postsPromise;
+// Espera postsPromise deixar de ficar pendente e depois guarda o valor retornado pela Promise.
+
+
+
+
+
+
+
+
+
+
+
+

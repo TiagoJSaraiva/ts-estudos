@@ -1,0 +1,184 @@
+Javascript
+
+1. - Visto
+
+Não sei
+undefined
+Object
+Não sei
+
+O primeiro e último caso eu realmente não sei. O segundo, eu assumo que "undefined" tem tipo "undefined" pois esse é o próprio significado da palavra: Indefinido. O terceiro caso, é um objeto vazio, oque faz dele um Object.
+
+2.
++
+== compara a igualdade de 2 valores, sem considerar o tipo deles, enquanto === considera o tipo, então as expressões escritas retornam, em ordem:
+true 
+false
+true
+false
+true
+false
+
+3.
+
+var e let são utilizados pra declarar variáveis que podem ser alteradas após a definição inicial, já const é usado para definir uma variável que, após a atribuição inicial a um valor, não pode mais ser alterado, além de que sempre precisa possuir um valor atribuído a ele, então:
+const variável;
+Não é permitido.
+var e let também possuem uma diferença de escopo: var vaza pro escopo global quando criado dentro de um laço ou decisão, enquanto let fica dentro de onde foi declarado, seja um laço, decisão, função, etc. 
+Por exemplo:
+if(1 === 1) { var texto = 'ola' }; console.log(texto);
+output: ola
+if(1 === 1) { let texto = 'ola' }; console.log(texto);
+output: erro de "texto is not defined"
+
+No exemplo dado, não há problema nenhum em oque é feito: É criado um objeto "user" com o atributo "name" com o valor "Tiago", em seguida, o atributo tem seu valor trocado para "João", mas o valor de "user" permanece o mesmo: um objeto. Mas uma coisa que eu não lembro, é se é possível colocar mais atributos num objeto atribuido a uma constante ou não, meu instinto diz que sim mas é meio confuso o porque seria assim.
+
+4.
+
+Hoisting é quando algo definido no escopo global é colocado em prioridade na "fila de carregamento" de elementos mediante a chamada de um script/função.
+Alguns tipos de valores, como function e var são alocados na memória antes de todo o resto da execução da lógica do script, enquanto let é carregado apenas quando o motor o lê durante a execução do script. Logo, no caso 1, a saída é 10, e no caso 2, a saída é undefined, pois "var a" já existe na memória, mas 10 ainda não foi atribuído a ela.
+Nesse caso há varias nuances que eu não sei explicar de forma técnica, como por exemplo, diferença entre function função() = {} e const funcao = () => {}; no ponto de vista do hoisting, e etc, meu conhecimento é bem básico e mais pra evitar problemas:
+- evitar var
+- só referenciar let ou const depois de cria-la
+- function pode ser criada em qualquer lugar do escopo e depois usada antes ou depois da linha em que foi escrita.
+
+etc.
+
+5.
+
+A declaração de counter = createCounter(); atribui a "counter" a função anônima function () {
+        count++;
+        return count;
+    };
+
+Que incrementa count, uma variável criada no escopo do pai dela, e retorna count
+
+Cada vez que counter é chamado, a função roda e continua tendo acesso aos valores criados no escopo do pai, mantendo alteração em seu estado a cada chamada.
+Assim as saídas ficam:
+1
+2
+3
+Agora, o motivo técnico pra isso eu não consigo entender.
+
+6.
+
+A primeira saida vai ser 20, pois você está criando uma referência de a em b: é o mesmo comportamento de um ponteiro.
+Em javascript, todo Array e Object (e possivelmente outros tipos) quando são atribuídos de forma direta a uma outra variável, oque o código cria é uma referência ao invés de uma cópia do valor.
+No caso de const b = { ...a }; está sendo usado o spread operator, oque ele faz é justamente atribuir a b um objeto cujos atributos e seus valores são idênticos aos atributos de a no momento da atribuição.
+
+7.
+
+A principio eu assumo que o spread operator cria um cópia completa de original para dentro de "copy", todos seus descendentes, de forma correta. mas como address também é um objeto, fica a dúvida se, em copy, copy.address continua referenciando o objeto original.address
+Então a saída pode ser tanto Jacareí quanto São Paulo, dependendo de qual opção está correta.
+
+8.
+
+O this é usado para referenciar um atributo que existe dentro de um objeto, de dentro do próprio objeto.
+Eu sei que existe diferença entre arrow function e function no uso do this, não lembro ao certo, mas suponho que a diferença seja que o uso do this em function normal procura o atributo daquele valor no pai dela, enquanto em uma arrow function, o valor é procurado dentro da própria função, logo, fazendo as saídas serem:
+Tiago
+undefined
+
+9.
+
+Eu sei que prototype tem a ver com criar objetos de um jeito diferente, mais comum em javascript puro em códigos legado, antes da existência de classes.
+Pelo próprio código, dá pra entender oque acontece: 
+À constante animal, é atribuído um objeto que possui uma função speak().
+em const dog = Object.create(animal);
+é atribuída uma cópia de animal a ele, fazendo com que ele "herde" tudo que animal possuía, inclusive, lembro que se animal tivesse passado por esse mesmo processo, dog herdaria tudo.
+Mas não sei como funciona por baixo dos panos, se ainda existe utilidade fora de código legado, etc. Além disso, também sei que, um objeto javascript sem estar "freezed", pode ganhar novos atributos sem problemas, como em dog.name em que "name" é criado.
+Assumo que dog.hasOwnProperty("speak") retorne falso pois a propriedade não é dele, mas sim de animal, que é o "protótipo" de dog.
+
+10.
+
+class é uma abstração da prototipagem, não? e da pra usar herança pra replicar a mesma funcionalidade de protótipos encadeados:
+class player extends human { }
+class human extends aliveEntity { }
+
+E assim por diante.
+
+11.
+
+Essa parte de métodos de array eu sempre me perco.
+
+map -> não sei
+filter -> remove todos os valores do array iguais ao argumento
+reduce -> aplica uma transformação sob todos os elementos do array, com base numa função anônima e uma variável enviados como argumento, sendo a variável o valor final que é gerado, e a função anônima a função que transforma os valores do array, criando um valor só.
+forEach -> itera sob todos os elementos do array.
+find -> encontra o primeiro elemento do array equivalente ao argumento.
+some -> não sei
+every -> encontra todos os elemento do array equivalente ao argumento?
+
+São todos métodos importantes pra manipular arrays sem precisar criar algoritmos manualmente.
+
+12. 
+
+Map se eu não me engano cria uma chave [valor, id] pra cada elemento dele.
+Semelhante a um array de tuplas mas que já te entrega várias coisas automaticamente como métodos, além de te proteger de erros de atribuição e automatizar a criação do id pra cada elemento?
+
+Set não permite que valores se repitam entre seus índices.
+
+Map eu não sei quando eu usaria, talvez em uma situação que eu consiga guardar os ids de elementos chave em um fluxo, mas não o número dos índices, visto que número de índice pode mudar depois de uma reorganização, enquanto id não.
+
+Set eu usaria quando quero garantir que um elemento não se repita em 2 ou mais índices diferentes.
+
+13.
+
+o primeiro caso é desestruturação, mas eu realmente não sei oque faz, só conseguiria chutar. Não consigo nem assumir qual seria o nome dessa constante. Talvez isso seja equivalente a 
+const name = user.name;
+const age = user.age;
+
+o segundo caso faz oque eu já tratei sobre lá em cima, cria uma cópia dos atributos e valores de user dentro de um objeto que é atribuído a copy.
+
+o terceiro caso eu não entendo. A principio, parece que ele apenas recebe uma cópia do objeto ou array recebido, ao invés de uma referência?
+
+Não lembro a diferença conceitual entre rest e spread operator. Eu já cheguei a estudar a diferença de ambos mas não me recordo.
+
+14.
+
+require eu sei que é o método tradicional da javascript para importar dependências para o código.
+Por exemplo, const express = require("express");
+Guarda uma referência a alguma coisa que o script da biblioteca "express" retorne, podendo ser um objeto, uma function, etc.
+import é a forma moderna que funciona desde o ES6, certo? Essencialmente faz a mesma coisa mas de forma mais explícita, além de que, coisas como
+import { funcao1, objeto1, funcao2 } from "script";
+eu não sei como eu faria utilizando require, então talvez o import tenha facilitado algumas coisas.
+Além disso, assumo que require() e import tenham alguma diferença a respeito do hoisting.
+Eu não sei exatamente oque são CommonJS e ES Modules, mas eu assumo que CommonJs seja a forma mais rústica do javascript, em que toda a lógica de um sistema fique num monolito .js, enquanto ES Modules permite export e import de conteúdo entre scripts.
+
+15.
+
+Mutável e imutável são conceitos relacionados a valores criados num sistema. Valores imutáveis são valores que não podem ser alterados, enquanto mutáveis são valores que poder ser modificados no decorrer de um sistema.
+Eu não sei muito sobre mutabilidade e imutabilidade no contexto de javascript. Eu sei que tem umas linguagens que forçam ou incentivam imutabilidade como padrão de uso de valores, como Clojure e outras funcionais, enquanto no javascript é questão de design, mas sei também de características de design da linguagem, como o fato que String é configurada no motor do js para ser imutável, impedindo coisas como let texto = "texto"; texto[1] = "a"; 
+E por outro lado, objetos podem ter seus atributos mudados sem limitações, a não ser que seja usado .freeze();
+
+16.
+
+Muito complexa para uma funcionalidade simples.
+Declaração de tipo retornado redundante: Função muito previsível e simples não precisa disso
+Método longo com iteração usando const -> melhor usar let.
+muitos métodos usados = inclue, push, pode diminuir eficiência.
+Nome pouco intuitivo para funcionalidade da função.
+Falta de comentário que explica a função de forma concisa
+Função pode ser otimizada desta forma:
+
+function filterUnique(numbers : number[]) { // Remove valores duplicados de um array de números.
+    const uniqueNumbers = new Set([...numbers]);
+    return [...uniqueNumbers];
+}
+
+Uma forma ainda mais compacta seria:
+
+function filterUnique(numbers : number[]) { // Remove valores duplicados de um array de números.
+    return Array.from(new Set(numbers));
+}
+
+E não sacrifica legibilidade.
+
+Oque eu não sei é a parte de complexidade de uma perspectiva de estrutura de dados = O(n), seila oque.
+
+
+
+
+Para ocupar menos espaço realizando a mesma funcionalidade.
+Enquanto objetos 
+
+
